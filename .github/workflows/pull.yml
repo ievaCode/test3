@@ -1,0 +1,22 @@
+name: BUILD ONLY MODIFIED
+
+on:
+  pull_request:
+    types: [assigned, opened, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[BOT]')"
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: extract branch
+        id: extract_branch
+        run: |
+          echo ${GITHUB_REF#refs/heads/}
+          echo $(echo ${GITHUB_REF#refs/heads/})
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      - name: run gradle :buildModifiedJobs
+        run: |
+          echo ${{ steps.extract_branch.outputs.branch }}
